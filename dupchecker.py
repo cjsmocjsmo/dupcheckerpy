@@ -36,10 +36,10 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
     # for img_path in filtered_walk(folder, included_files=image_extensions):
     for dir, _, files in os.walk(folder):
         for file in files:
+            ext = os.path.splitext(file)[1].lower()
+            extlist.append(ext)
             if file.lower().endswith(tuple(image_extensions)):
                 img_path = os.path.join(dir, file)
-                ext = os.path.splitext(file)[1].lower()
-                extlist.append(ext)
                 filelist.append(img_path)
     
     pprint(filelist)
