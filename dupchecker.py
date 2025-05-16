@@ -45,7 +45,7 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                     continue
 
                 # Process the image
-                print(f"Processing {img_path}...")
+                # print(f"Processing {img_path}...")
                 # Uncomment the following lines to calculate and store the hash
                 phash = calculate_phash(img_path)
                 if phash:
@@ -54,21 +54,8 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                     except sqlite3.IntegrityError:
                         print(f"Skipping {file} as it's already in the database.")
             filename = os.path.join(dir, file)
-            print(filename)
-        
-        
-    #     try:
-    #         phash = calculate_phash(img_path)
-    #         if phash:
-    #             try:
-    #                 cursor.execute("INSERT OR IGNORE INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (filename, img_path, phash))
-    #             except sqlite3.IntegrityError:
-    #                 print(f"Skipping {filename} as it's already in the database.")
-    #     except Exception as e:
-    #         print(f"Error processing {filename}: {e}")
+            # print(filename)
 
-    # conn.commit()
-    # conn.close()
     print(f"Processed images and stored hashes in {db_name}")
 
 if __name__ == '__main__':
