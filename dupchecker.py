@@ -4,6 +4,7 @@ from PIL import Image
 import imagehash
 import cv2  # Import cv2 here as well, in case it's not already in the environment
 from walkdir import filtered_walk
+from pprint import pprint
 
 def calculate_phash(image_path):
     try:
@@ -31,7 +32,7 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
 
     image_extensions = ['*.png', '*.jpg', '*.jpeg', '*.gif', '*.bmp']
     for img_path in filtered_walk(folder, included_files=image_extensions):
-        print(img_path)
+        pprint(img_path)
         filename = os.path.basename(img_path)
         
     #     try:
