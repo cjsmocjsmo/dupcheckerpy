@@ -31,7 +31,10 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
     conn.commit()
 
     image_extensions = ['*.png', '*.jpg', '*.jpeg', '*.gif', '*.bmp']
-    for img_path in filtered_walk(folder, included_files=image_extensions):
+    # for img_path in filtered_walk(folder, included_files=image_extensions):
+    for dir, _, files in os.walk(folder):
+        for file in files:
+            filename = os.path.join(dir, file)
         pprint(img_path)
         filename = os.path.basename(img_path)
         
