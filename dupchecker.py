@@ -29,6 +29,7 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
     conn.commit()
 
     for filename in os.listdir(folder):
+        print(f"Processing {filename}...")
         img_path = os.path.join(folder, filename)
         try:
             # Check if it's an image file (you might want to add more extensions)
