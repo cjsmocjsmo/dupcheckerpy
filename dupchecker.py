@@ -31,30 +31,39 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
     conn.commit()
 
     image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp']
+    filelist = []
+    extlist = []
     # for img_path in filtered_walk(folder, included_files=image_extensions):
     for dir, _, files in os.walk(folder):
         for file in files:
             if file.lower().endswith(tuple(image_extensions)):
                 img_path = os.path.join(dir, file)
-                # Check if the image is valid
-                try:
-                    img = Image.open(img_path)
-                    img.verify()  # Verify that it is an image
-                except Exception as e:
-                    print(f"Invalid image {img_path}: {e}")
-                    continue
+                ext = os.path.splitext(file)[1].lower()
+                extlist.append(ext)
+                filelist.append(img_path)
+    
+    pprint(filelist)
+    pprint(list(set(extlist)))
 
-                # Process the image
-                # print(f"Processing {img_path}...")
-                # Uncomment the following lines to calculate and store the hash
-                phash = calculate_phash(img_path)
-                if phash:
-                    try:
-                        cursor.execute("INSERT OR IGNORE INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (file, img_path, phash))
-                    except sqlite3.IntegrityError:
-                        print(f"Skipping {file} as it's already in the database.")
-            filename = os.path.join(dir, file)
-            # print(filename)
+                # Check if the image is valid
+            #     try:
+            #         img = Image.open(img_path)
+            #         img.verify()  # Verify that it is an image
+            #     except Exception as e:
+            #         print(f"Invalid image {img_path}: {e}")
+            #         continue
+
+            #     # Process the image
+            #     # print(f"Processing {img_path}...")
+            #     # Uncomment the following lines to calculate and store the hash
+            #     phash = calculate_phash(img_path)
+            #     if phash:
+            #         try:
+            #             cursor.execute("INSERT OR IGNORE INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (file, img_path, phash))
+            #         except sqlite3.IntegrityError:
+            #             print(f"Skipping {file} as it's already in the database.")
+            # filename = os.path.join(dir, file)
+            print(img_path)
 
     print(f"Processed images and stored hashes in {db_name}")
 
