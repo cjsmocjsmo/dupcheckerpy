@@ -3,6 +3,7 @@ import sqlite3
 from PIL import Image
 import imagehash
 import cv2  # Import cv2 here as well, in case it's not already in the environment
+from walkdir import filtered_walk
 
 def calculate_phash(image_path):
     try:
@@ -28,18 +29,17 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
     ''')
     conn.commit()
 
-    for filename in os.listdir(folder):
+    image_extensions = ['*.png', '*.jpg', '*.jpeg', '*.gif', '*.bmp']
+    for img_path in filtered_walk(folder, included_files=image_extensions):
+        filename = os.path.basename(img_path)
         print(f"Processing {filename}...")
-        img_path = os.path.join(folder, filename)
         try:
-            # Check if it's an image file (you might want to add more extensions)
-            if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
-                phash = calculate_phash(img_path)
-                if phash:
-                    try:
-                        cursor.execute("INSERT OR IGNORE INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (filename, img_path, phash))
-                    except sqlite3.IntegrityError:
-                        print(f"Skipping {filename} as it's already in the database.")
+            phash = calculate_phash(img_path)
+            if phash:
+                try:
+                    cursor.execute("INSERT OR IGNORE INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (filename, img_path, phash))
+                except sqlite3.IntegrityError:
+                    print(f"Skipping {filename} as it's already in the database.")
         except Exception as e:
             print(f"Error processing {filename}: {e}")
 
