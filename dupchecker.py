@@ -35,8 +35,8 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
     for dir, _, files in os.walk(folder):
         for file in files:
             filename = os.path.join(dir, file)
-        pprint(img_path)
-        filename = os.path.basename(img_path)
+            print(filename)
+        
         
     #     try:
     #         phash = calculate_phash(img_path)
