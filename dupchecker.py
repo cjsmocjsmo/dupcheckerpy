@@ -63,7 +63,7 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
             #         except sqlite3.IntegrityError:
             #             print(f"Skipping {file} as it's already in the database.")
             # filename = os.path.join(dir, file)
-            print(img_path)
+            # print(img_path)
 
     print(f"Processed images and stored hashes in {db_name}")
 
