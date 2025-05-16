@@ -31,20 +31,21 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
 
     image_extensions = ['*.png', '*.jpg', '*.jpeg', '*.gif', '*.bmp']
     for img_path in filtered_walk(folder, included_files=image_extensions):
+        print(img_path)
         filename = os.path.basename(img_path)
-        print(f"Processing {filename}...")
-        try:
-            phash = calculate_phash(img_path)
-            if phash:
-                try:
-                    cursor.execute("INSERT OR IGNORE INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (filename, img_path, phash))
-                except sqlite3.IntegrityError:
-                    print(f"Skipping {filename} as it's already in the database.")
-        except Exception as e:
-            print(f"Error processing {filename}: {e}")
+        
+    #     try:
+    #         phash = calculate_phash(img_path)
+    #         if phash:
+    #             try:
+    #                 cursor.execute("INSERT OR IGNORE INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (filename, img_path, phash))
+    #             except sqlite3.IntegrityError:
+    #                 print(f"Skipping {filename} as it's already in the database.")
+    #     except Exception as e:
+    #         print(f"Error processing {filename}: {e}")
 
-    conn.commit()
-    conn.close()
+    # conn.commit()
+    # conn.close()
     print(f"Processed images and stored hashes in {db_name}")
 
 if __name__ == '__main__':
