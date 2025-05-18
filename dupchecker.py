@@ -41,8 +41,6 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
             if file.lower().endswith(tuple(image_extensions)):
                 img_path = os.path.join(dir, file)
                 filelist.append(img_path)
-    
-    
 
                 # Check if the image is valid
                 try:
@@ -52,7 +50,7 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                     print(f"Invalid image {img_path}: {e}")
                     continue
 
-    pprint(filelist)
+    # pprint(filelist)
     pprint(list(set(extlist)))
 
             #     # Process the image
