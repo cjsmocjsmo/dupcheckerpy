@@ -42,16 +42,18 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                 img_path = os.path.join(dir, file)
                 filelist.append(img_path)
     
-    pprint(filelist)
-    pprint(list(set(extlist)))
+    
 
                 # Check if the image is valid
-            #     try:
-            #         img = Image.open(img_path)
-            #         img.verify()  # Verify that it is an image
-            #     except Exception as e:
-            #         print(f"Invalid image {img_path}: {e}")
-            #         continue
+                try:
+                    img = Image.open(img_path)
+                    img.verify()  # Verify that it is an image
+                except Exception as e:
+                    print(f"Invalid image {img_path}: {e}")
+                    continue
+
+    pprint(filelist)
+    pprint(list(set(extlist)))
 
             #     # Process the image
             #     # print(f"Processing {img_path}...")
