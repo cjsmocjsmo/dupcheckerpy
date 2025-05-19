@@ -26,7 +26,7 @@ def process_images_and_store_hashes(folder, db_name='image.db'):
             image_id INTEGER PRIMARY KEY AUTOINCREMENT,
             filename TEXT UNIQUE,
             path TEXT UNIQUE,
-            phash TEXT UNIQUE
+            phash TEXT
         )
     ''')
     conn.commit()
