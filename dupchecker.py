@@ -56,6 +56,7 @@ def process_images_and_store_hashes(folder, db_name='image.db'):
                         try:
                             cursor.execute("INSERT INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (file, img_path, phash))
                             print(f"Inserted {file} into the database.")
+                            conn.commit()
                         except sqlite3.IntegrityError:
                             print(f"Skipping {file} as it's already in the database.")
                     else:
