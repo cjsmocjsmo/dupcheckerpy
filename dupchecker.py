@@ -16,7 +16,7 @@ def calculate_phash(image_path):
         print(f"Error calculating pHash for {image_path}: {e}")
         return None
 
-def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
+def process_images_and_store_hashes(folder, db_name='image.db'):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
 
