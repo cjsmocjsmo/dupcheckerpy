@@ -51,7 +51,7 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                     continue
 
     # pprint(filelist)
-    pprint(list(set(extlist)))
+    # pprint(list(set(extlist)))
 
             #     # Process the image
             #     # print(f"Processing {img_path}...")
