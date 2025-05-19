@@ -68,5 +68,5 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
     print(f"Processed images and stored hashes in {db_name}")
 
 if __name__ == '__main__':
-    image_folder = '/home/whitepi/Pictures/Pic1'  # Replace with the path to your image folder
+    image_folder = '/home/whitepi/Pictures'  # Replace with the path to your image folder
     process_images_and_store_hashes(image_folder)
