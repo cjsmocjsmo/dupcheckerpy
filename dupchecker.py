@@ -51,12 +51,18 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                     continue
                 print(img_path)
     
-    
+                # Resize image to 256x256 and convert to greyscale
+                try:
+                    img = Image.open(img_path).convert('L')
+                    img = img.resize((256, 256))
+                except Exception as e:
+                    print(f"Error resizing or converting {img_path}: {e}")
+                    continue
 
                 # Process the image
                 # print(f"Processing {img_path}...")
                 # Uncomment the following lines to calculate and store the hash
-                phash = calculate_phash(img_path)
+                phash = calculate_phash(img)
                 if phash:
                     try:
                         cursor.execute("INSERT OR IGNORE INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (file, img_path, phash))
