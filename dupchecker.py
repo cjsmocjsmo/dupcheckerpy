@@ -22,7 +22,7 @@ def process_images_and_store_hashes(folder, db_name='image.db'):
 
     # Create table if it doesn't exist
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS image_hashes (
+        CREATE TABLE IF NOT EXISTS hashes (
             image_id INTEGER PRIMARY KEY AUTOINCREMENT,
             filename TEXT UNIQUE,
             path TEXT UNIQUE,
