@@ -49,7 +49,7 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                 except Exception as e:
                     print(f"Invalid image {img_path}: {e}")
                     continue
-                print(img_path)
+                
     
                 # Resize image to 256x256 and convert to greyscale
                 try:
@@ -63,6 +63,7 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                 # print(f"Processing {img_path}...")
                 # Uncomment the following lines to calculate and store the hash
                 phash = calculate_phash(img)
+                print(phash)
                 if phash:
                     try:
                         cursor.execute("INSERT OR IGNORE INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (file, img_path, phash))
