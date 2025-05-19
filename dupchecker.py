@@ -41,21 +41,21 @@ def process_images_and_store_hashes(folder, db_name='image.db'):
             extlist.append(ext)
             if file.lower().endswith(tuple(image_extensions)):
                 img_path = os.path.join(dir, file)
-                print(f"Processing file: {img_path}")
+                # print(f"Processing file: {img_path}")
                 try:
                     img = Image.open(img_path).convert('L')
                     img = img.resize((256, 256))
                     with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as temp_file:
                         temp_path = temp_file.name
                         img.save(temp_path)
-                        print(f"Temporary file saved at {temp_path}")
+                        # print(f"Temporary file saved at {temp_path}")
                         phash = calculate_phash(temp_path)
                     os.remove(temp_path)
                     print(f"Calculated pHash for {img_path}: {phash}")
                     if phash:
                         try:
                             cursor.execute("INSERT INTO hashes (filename, path, phash) VALUES (?, ?, ?)", (file, img_path, phash))
-                            print(f"Inserted {file} into the database.")
+                            print(f"Inserted {phash} into the database.")
                         except sqlite3.IntegrityError:
                             print(f"Skipping {file} as it's already in the database.")
                         conn.commit()
