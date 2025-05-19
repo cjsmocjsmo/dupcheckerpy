@@ -77,6 +77,15 @@ from functools import partial
 #     process_images_and_store_hashes(image_folder)
 
 
+def calculate_phash(image_path):
+    try:
+        img = Image.open(image_path).convert('L')
+        hash_value = imagehash.phash(img)
+        return str(hash_value)
+    except Exception as e:
+        print(f"Error calculating pHash for {image_path}: {e}")
+        return None
+
 def process_single_image(img_path, db_name):
     try:
         conn = sqlite3.connect(db_name)
@@ -138,3 +147,7 @@ def process_images_and_store_hashes(folder, db_name='image.db'):
         executor.map(process_func, img_paths)
 
     print(f"Processed {count} images and stored hashes in {db_name}")
+
+if __name__ == '__main__':
+    image_folder = '/home/whitepi/Pictures'  # Replace with the path to your image folder
+    process_images_and_store_hashes(image_folder)
