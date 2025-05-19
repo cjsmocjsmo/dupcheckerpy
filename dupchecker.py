@@ -25,7 +25,7 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
             image_id INTEGER PRIMARY KEY AUTOINCREMENT,
             filename TEXT UNIQUE,
             path TEXT UNIQUE,
-            phash TEXT
+            phash TEXT UNIQUE
         )
     ''')
     conn.commit()
@@ -51,7 +51,7 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                     continue
 
     # pprint(filelist)
-    # pprint(list(set(extlist)))
+    
 
                 # Process the image
                 # print(f"Processing {img_path}...")
@@ -64,7 +64,7 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                         print(f"Skipping {file} as it's already in the database.")
             filename = os.path.join(dir, file)
             # print(img_path)
-
+    pprint(list(set(extlist)))
     print(f"Processed images and stored hashes in {db_name}")
 
 if __name__ == '__main__':
