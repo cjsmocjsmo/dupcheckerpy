@@ -26,7 +26,7 @@ def process_images_and_store_hashes(folder, db_name='image.db'):
             image_id INTEGER PRIMARY KEY AUTOINCREMENT,
             filename TEXT UNIQUE,
             path TEXT UNIQUE,
-            phash TEXT
+            phash TEXT UNIQUE
         )
     ''')
     conn.commit()
@@ -54,11 +54,11 @@ def process_images_and_store_hashes(folder, db_name='image.db'):
                     print(f"Calculated pHash for {img_path}: {phash}")
                     if phash:
                         try:
-                            cursor.execute("INSERT INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (file, img_path, phash))
+                            cursor.execute("INSERT INTO hashes (filename, path, phash) VALUES (?, ?, ?)", (file, img_path, phash))
                             print(f"Inserted {file} into the database.")
-                            conn.commit()
                         except sqlite3.IntegrityError:
                             print(f"Skipping {file} as it's already in the database.")
+                        conn.commit()
                     else:
                         print(f"Hash for {file} is None, skipping database insertion.")
                 except Exception as e:
