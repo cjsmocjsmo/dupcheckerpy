@@ -5,6 +5,7 @@ import imagehash
 import cv2  # Import cv2 here as well, in case it's not already in the environment
 from walkdir import filtered_walk
 from pprint import pprint
+import tempfile
 
 def calculate_phash(image_path):
     try:
@@ -55,6 +56,11 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                 try:
                     img = Image.open(img_path).convert('L')
                     img = img.resize((256, 256))
+                    with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as temp_file:
+                        temp_path = temp_file.name
+                        img.save(temp_path)
+                        phash = calculate_phash(temp_path)
+                    os.remove(temp_path)
                 except Exception as e:
                     print(f"Error resizing or converting {img_path}: {e}")
                     continue
@@ -62,8 +68,8 @@ def process_images_and_store_hashes(folder, db_name='image_hashes.db'):
                 # Process the image
                 # print(f"Processing {img_path}...")
                 # Uncomment the following lines to calculate and store the hash
-                phash = calculate_phash(img)
-                print(phash)
+                # phash = calculate_phash(img)
+                # print(phash)
                 if phash:
                     try:
                         cursor.execute("INSERT OR IGNORE INTO image_hashes (filename, path, phash) VALUES (?, ?, ?)", (file, img_path, phash))
