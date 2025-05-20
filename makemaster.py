@@ -30,7 +30,7 @@ try:
     print(f"Successfully retrieved {len(piclist)} image paths from the database.")
 except sqlite3.Error as e:
     print(f"Error connecting to or querying the database: {e}")
-    exit()
+    exit(1)
 
 # Loop through the piclist and copy the images
 print("Copying images to MasterPics...")
@@ -42,9 +42,12 @@ for source_path in piclist:
             print(f"Copied '{os.path.basename(source_path)}'")
         else:
             print(f"Warning: Source path '{source_path}' is not a file. Skipping.")
+            exit(1)
     except FileNotFoundError:
         print(f"Error: Source file '{source_path}' not found.")
+        exit(1)
     except OSError as e:
         print(f"Error copying '{source_path}': {e}")
+        exit(1)
 
 print("Image copying process completed.")
