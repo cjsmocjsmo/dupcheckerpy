@@ -40,19 +40,16 @@ except sqlite3.Error as e:
 print("Copying images to MasterPics...")
 for data in piclist:
     try:
-        if os.path.isfile(data["path"]):
-            dpath = master_pics_dir + "/" + data["phash"] + ".jpg"
-            # destination_path = os.path.join(master_pics_dir, os.path.basename(data))
-            shutil.copy2(data, dpath)  # copy2 preserves metadata
-            print(f"Copied '{os.path.basename(data)}'")
+        src_path = data["path"]  # Extract the source path from the dictionary
+        if os.path.isfile(src_path):
+            dpath = os.path.join(master_pics_dir, f"{data['phash']}.jpg")
+            shutil.copy2(src_path, dpath)  # Use the extracted path
+            print(f"Copied '{os.path.basename(src_path)}' to '{dpath}'")
         else:
-            print(f"Warning: Source path '{data}' is not a file. Skipping.")
-            exit(1)
+            print(f"Warning: Source path '{src_path}' is not a file. Skipping.")
     except FileNotFoundError:
-        print(f"Error: Source file '{data}' not found.")
-        exit(1)
+        print(f"Error: Source file '{src_path}' not found.")
     except OSError as e:
-        print(f"Error copying '{data}': {e}")
-        exit(1)
+        print(f"Error copying '{src_path}': {e}")
 
 print("Image copying process completed.")
