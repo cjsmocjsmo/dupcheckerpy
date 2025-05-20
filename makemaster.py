@@ -4,7 +4,7 @@ import shutil
 
 # Define the directories and database file
 master_pics_dir = '/home/whitepi/MasterPics'
-db_file = '/home/whitepi/dupcheckerpy/dupcheckerpi/image.db'
+db_file = '/home/whitepi/dupcheckerpy/dupcheckerpy/image.db'
 
 # Create the MasterPics directory if it doesn't exist
 if not os.path.exists(master_pics_dir):
