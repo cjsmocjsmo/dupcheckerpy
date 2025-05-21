@@ -43,4 +43,4 @@ class ExtCount:
 
 if __name__ == '__main__':
     folder = '/home/whitepi/Pictures'
-    ext_counter = ExtCount(folder)
+    ext_counter = ExtCount(folder).get_ext_count()
