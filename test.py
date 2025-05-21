@@ -24,6 +24,7 @@ class ExtCount:
 
                 if file.lower().endswith(".png"):
                     self.pngcount += 1
+                    print(file)
                 elif file.lower().endswith(".jpg"):
                     self.jpgcount += 1
                 elif file.lower().endswith(".jpeg"):
