@@ -9,6 +9,9 @@ class ExtCount:
         self.jpegcount = 0
         self.gifcount = 0
         self.bmpcount = 0
+        self.count3gp = 0
+        self.jsoncount = 0
+        self.pdfcount = 0
         self.mp4count = 0
         self.folder = folder
         self.ext_list = []
@@ -31,6 +34,13 @@ class ExtCount:
                     self.bmpcount += 1
                 elif file.lower().endswith(".mp4"):
                     self.mp4count += 1
+                elif file.lower().endswith(".3gp"):
+                    self.count3gp += 1
+                elif file.lower().endswith(".json"):
+                    self.jsoncount += 1
+                elif file.lower().endswith(".pdf"):
+                    self.pdfcount += 1
+
 
         print(f"PNG: {self.pngcount}")
         print(f"JPG: {self.jpgcount}")
@@ -38,6 +48,9 @@ class ExtCount:
         print(f"GIF: {self.gifcount}")
         print(f"BMP: {self.bmpcount}")
         print(f"MP4: {self.mp4count}")
+        print(f"3GP: {self.count3gp}")
+        print(f"JSON: {self.jsoncount}")
+        print(f"PDF: {self.pdfcount}")
         print(f"ext_list: {list(set(self.ext_list))}")
 
 
