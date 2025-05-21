@@ -20,17 +20,17 @@ class ExtCount:
                 self.ext_list.append(ext)
 
                 if file.lower().endswith(".png"):
-                    pngcount += 1
+                    self.pngcount += 1
                 elif file.lower().endswith(".jpg"):
-                    jpgcount += 1
+                    self.jpgcount += 1
                 elif file.lower().endswith(".jpeg"):
-                    jpegcount += 1
+                    self.jpegcount += 1
                 elif file.lower().endswith(".gif"):
-                    gifcount += 1
+                    self.gifcount += 1
                 elif file.lower().endswith(".bmp"):
-                    bmpcount += 1
+                    self.bmpcount += 1
                 elif file.lower().endswith(".mp4"):
-                    mp4count += 1
+                    self.mp4count += 1
 
         print(f"PNG: {self.pngcount}")
         print(f"JPG: {self.jpgcount}")
