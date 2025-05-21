@@ -38,7 +38,7 @@ class ExtCount:
         print(f"GIF: {self.gifcount}")
         print(f"BMP: {self.bmpcount}")
         print(f"MP4: {self.mp4count}")
-        print(f"ext_list: {self.ext_list}")
+        print(f"ext_list: {list(set(self.ext_list))}")
 
 
 if __name__ == '__main__':
