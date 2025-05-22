@@ -37,6 +37,7 @@ class ExtCount:
                     self.mp4count += 1
                 elif file.lower().endswith(".3gp"):
                     self.count3gp += 1
+                    print(file)
                 elif file.lower().endswith(".json"):
                     self.jsoncount += 1
                 elif file.lower().endswith(".pdf"):
