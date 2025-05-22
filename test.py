@@ -21,6 +21,7 @@ class ExtCount:
             for file in files:
                 ext = os.path.splitext(file)[1].lower()
                 self.ext_list.append(ext)
+                fpath = os.path.join(dir, file)
 
                 if file.lower().endswith(".png"):
                     self.pngcount += 1
@@ -37,7 +38,7 @@ class ExtCount:
                     self.mp4count += 1
                 elif file.lower().endswith(".3gp"):
                     self.count3gp += 1
-                    print(file)
+                    print(fpath)
                 elif file.lower().endswith(".json"):
                     self.jsoncount += 1
                 elif file.lower().endswith(".pdf"):
