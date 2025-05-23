@@ -53,3 +53,45 @@ for data in piclist:
         print(f"Error copying '{src_path}': {e}")
 
 print("Image copying process completed.")
+
+movlist = []
+
+try:
+    conn = sqlite3.connect(db_file)
+    cursor = conn.cursor()
+    cursor.execute("SELECT path, mhash FROM video_hashes")
+    rows = cursor.fetchall()
+    for row in rows:
+        data = {
+            "path": row[0],
+            "mhash": row[1]
+        }
+        movlist.append(data)
+    conn.close()
+    print(f"Successfully retrieved {len(movlist)} video paths from the database.")
+except sqlite3.Error as e:
+    print(f"Error connecting to or querying the database: {e}")
+    exit(1)
+# Loop through the movlist and copy the videos
+print("Copying videos to MasterPics...")
+for data in movlist:
+    try:
+        src_path = data["path"]  # Extract the source path from the dictionary
+        if os.path.isfile(src_path):
+            dpath = os.path.join(master_pics_dir, f"{data['mhash']}.mp4")
+            shutil.copy2(src_path, dpath)  # Use the extracted path
+            print(f"Copied '{os.path.basename(src_path)}' to '{dpath}'")
+        else:
+            print(f"Warning: Source path '{src_path}' is not a file. Skipping.")
+    except FileNotFoundError:
+        print(f"Error: Source file '{src_path}' not found.")
+    except OSError as e:
+        print(f"Error copying '{src_path}': {e}")
+print("Video copying process completed.")
+# Close the database connection
+try:
+    conn.close()
+    print("Database connection closed.")
+except sqlite3.Error as e:
+    print(f"Error closing the database connection: {e}")
+    exit(1)
