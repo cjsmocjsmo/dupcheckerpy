@@ -77,7 +77,7 @@ def organize_images_by_size(source_folder, destination_base_folder, max_folder_s
 SOURCE_FOLDER = "/home/whitepi/MasterPics"
 
 # IMPORTANT: Replace 'path/to/your/output_folders' with where you want the new subfolders to be created.
-DESTINATION_BASE_FOLDER = "/home/whitepi/org_img"
+DESTINATION_BASE_FOLDER = "/home/whitepi/MasterPicsDeduped"
 
 # Maximum size per subfolder in Gigabytes
 MAX_FOLDER_SIZE_GB = 2.0
