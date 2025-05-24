@@ -44,7 +44,7 @@ for data in piclist:
         if os.path.isfile(src_path):
             dpath = os.path.join(master_pics_dir, f"{data['phash']}.jpg")
             shutil.copy2(src_path, dpath)  # Use the extracted path
-            print(f"Copied '{os.path.basename(src_path)}' to '{dpath}'")
+            print(f"Copied '{os.path.basename(src_path)}' to\n\t '{dpath}'")
         else:
             print(f"Warning: Source path '{src_path}' is not a file. Skipping.")
     except FileNotFoundError:
@@ -80,7 +80,7 @@ for data in movlist:
         if os.path.isfile(src_path):
             dpath = os.path.join(master_pics_dir, f"{data['mhash']}.mp4")
             shutil.copy2(src_path, dpath)  # Use the extracted path
-            print(f"Copied '{os.path.basename(src_path)}' to '{dpath}'")
+            print(f"Copied '{os.path.basename(src_path)}' to\t\n '{dpath}'")
         else:
             print(f"Warning: Source path '{src_path}' is not a file. Skipping.")
     except FileNotFoundError:
