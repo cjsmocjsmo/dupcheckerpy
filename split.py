@@ -62,7 +62,7 @@ def organize_images_by_size(source_folder, destination_base_folder, max_folder_s
 
         try:
             # Move the file to the current subfolder
-            shutil.move(file_path, destination_file_path)
+            shutil.copy2(file_path, destination_file_path)
             current_subfolder_size_bytes += file_size
             print(f"Moved '{filename}' to '{current_subfolder_name}'. Current size: {current_subfolder_size_bytes / (1024 * 1024 * 1024):.2f} GB")
         except shutil.Error as e:
@@ -80,7 +80,7 @@ SOURCE_FOLDER = "/home/whitepi/MasterPics"
 DESTINATION_BASE_FOLDER = "/home/whitepi/MasterPicsDeduped"
 
 # Maximum size per subfolder in Gigabytes
-MAX_FOLDER_SIZE_GB = 2.0
+MAX_FOLDER_SIZE_GB = 1.85
 
 # --- Run the script ---
 if __name__ == "__main__":
