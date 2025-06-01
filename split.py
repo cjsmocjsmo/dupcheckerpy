@@ -64,7 +64,7 @@ def organize_images_by_size(source_folder, destination_base_folder, max_folder_s
             # Move the file to the current subfolder
             shutil.copy2(file_path, destination_file_path)
             current_subfolder_size_bytes += file_size
-            print(f"Moved '{filename}' to '{current_subfolder_name}'. Current size: {current_subfolder_size_bytes / (1024 * 1024 * 1024):.2f} GB")
+            print(f"Copied '{filename}' to\n\t'{current_subfolder_name}'\n\tCurrent size: {current_subfolder_size_bytes / (1024 * 1024 * 1024):.2f} GB")
         except shutil.Error as e:
             print(f"Error moving '{filename}' to '{current_subfolder_name}'. Error: {e}")
         except Exception as e:
