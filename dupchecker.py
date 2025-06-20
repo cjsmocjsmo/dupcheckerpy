@@ -1,14 +1,11 @@
 import os
 import sqlite3
-from PIL import Image
-import imagehash
-# import cv2  # Import cv2 here as well, in case it's not already in the environment
-from walkdir import filtered_walk
-# from pprint import pprint
-import tempfile
-from concurrent.futures import ProcessPoolExecutor
-from functools import partial
 import hashlib
+import imagehash
+import tempfile
+from PIL import Image
+from functools import partial
+from concurrent.futures import ProcessPoolExecutor
 
 def calculate_mhash(file_path, buffer_size=65536):
     """Generates an MD5 hash of the file content."""
@@ -131,6 +128,9 @@ def process_images_and_store_hashes(folder, db_name='image.db'):
 
     print(f"Processed {count} images and stored hashes in {db_name}")
 
-if __name__ == '__main__':
-    image_folder = '/home/whitepi/Pictures'  # Replace with the path to your image folder
-    process_images_and_store_hashes(image_folder)
+def dupchecker_main(IMAGE_FOLDER):
+    process_images_and_store_hashes(IMAGE_FOLDER)
+
+# if __name__ == '__main__':
+#     image_folder = '/home/whitepi/Pictures'  # Replace with the path to your image folder
+#     process_images_and_store_hashes(image_folder)
