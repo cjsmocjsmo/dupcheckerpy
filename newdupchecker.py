@@ -332,10 +332,10 @@ def split_main(SOURCE_FOLDER, DESTINATION_BASE_FOLDER, MAX_FOLDER_SIZE_GB):
 
 if __name__ == '__main__':
 
-    SOURCE_FOLDER = "/home/whitepi/MasterPics"
-    DESTINATION_BASE_FOLDER = "/home/whitepi/MasterPicsDeduped"
-    DB_FILE = '/home/whitepi/dupcheckerpy/dupcheckerpy/image.db'
-    MAX_FOLDER_SIZE_GB = 1.0
+    SOURCE_FOLDER = "/home/whitepi/Pictures"
+    DESTINATION_BASE_FOLDER = "/media/whitepi/foo/MasterPicsDeduped"
+    DB_FILE = '/home/whitepi/pcheckerpy/dupcheckerpy/image.db'
+    MAX_FOLDER_SIZE_GB = 1.80
 
     dupchecker_main(SOURCE_FOLDER)
     create_master_pics_dir(SOURCE_FOLDER)
