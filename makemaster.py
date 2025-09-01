@@ -4,7 +4,7 @@ import shutil
 
 # Define the directories and database file
 master_pics_dir = '/media/whitepi/ATree/'
-db_file = '/home/whitepi/rust/dupcheckerrs/image.db'
+db_file = '/home/whitepi/rust/dupcheckerrs/images.db'
 
 def create_master_pics_dir(master_pics_dir):
     """Create the MasterPics directory if it doesn't exist."""
