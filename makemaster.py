@@ -3,8 +3,8 @@ import sqlite3
 import shutil
 
 # Define the directories and database file
-master_pics_dir = '/media/whitepi/foo/MasterPics2025Aug31/'
-db_file = '/home/whitepi/dupcheckerpy/dupcheckerpy/image.db'
+master_pics_dir = '/media/whitepi/ATree/'
+db_file = '/home/whitepi/rust/dupcheckerpy/images.db'
 
 def create_master_pics_dir(master_pics_dir):
     """Create the MasterPics directory if it doesn't exist."""
@@ -109,7 +109,7 @@ def copy_movies(movlist, master_pics_dir):
 def main(pics_dir):
     master_pics_dir = create_master_pics_dir(pics_dir)
     print("MasterPics directory is ready.")
-    piclist = create_piclist()
+    piclist = create_piclist(db_file)
     if piclist:
         copy_images(piclist, master_pics_dir)
     else:
