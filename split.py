@@ -2,6 +2,8 @@ import os
 import shutil
 import math
 
+from newdupchecker import SOURCE_FOLDER
+
 def organize_images_by_size(source_folder, destination_base_folder, max_folder_size_gb):
     """
     Organizes images from a source folder into subfolders,
@@ -72,10 +74,15 @@ def organize_images_by_size(source_folder, destination_base_folder, max_folder_s
 
     print(f"\nImage organization complete. Total subfolders created: {subfolder_count}")
 
-def split_main(SOURCE_FOLDER, DESTINATION_BASE_FOLDER, MAX_FOLDER_SIZE_GB):
+def split_main():
+    SOURCE_FOLDER = "/media/piir/PiTB/DONTDELETE"
+    DESTINATION_BASE_FOLDER = "/media/piir/PiTB/DONTDELETESPLIT"
+    MAX_FOLDER_SIZE_GB = 1.85
+
     organize_images_by_size(SOURCE_FOLDER, DESTINATION_BASE_FOLDER, MAX_FOLDER_SIZE_GB)
 
-
+if __name__ == "__main__":
+    split_main()
 # # --- Configuration ---
 # # IMPORTANT: Replace 'path/to/your/20000_images_folder' with the actual path to your images.
 # SOURCE_FOLDER = "/home/whitepi/MasterPics"
