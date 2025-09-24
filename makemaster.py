@@ -3,8 +3,8 @@ import sqlite3
 import shutil
 
 # Define the directories and database file
-master_pics_dir = '/media/whitepi/ATree/'
-db_file = '/home/whitepi/rust/dupcheckerrs/images.db'
+master_pics_dir = '/media/piir/PiTB/DONTDELETE/'
+db_file = '/home/piir/dupcheckerpy/dupcheckerpy/imagehashes.db'
 
 def create_master_pics_dir(master_pics_dir):
     """Create the MasterPics directory if it doesn't exist."""
