@@ -17,6 +17,7 @@ def create_master_pics_dir(master_pics_dir):
             exit()
     else:
         print(f"Directory '{master_pics_dir}' already exists.")
+    return master_pics_dir
 
 def create_piclist(db_file):
     """Create a list of image paths from the database."""
@@ -114,7 +115,7 @@ def main(pics_dir):
         copy_images(piclist, master_pics_dir)
     else:
         print("No images found in the database to copy.")
-    movlist = create_movlist()
+    movlist = create_movlist(db_file)
     if movlist:
         copy_movies(movlist, master_pics_dir)
     else:
