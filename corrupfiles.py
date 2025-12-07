@@ -57,35 +57,42 @@ def check_directory_for_corrupted_images_recursive(root_directory):
     # Define common image file extensions to look for (lowercase for comparison)
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff']
     
+    import concurrent.futures
     corrupted_images = []
     possible_icons = []
+    image_paths = []
     total_files_checked = 0
-    
+
     print(f"--- Checking Images Recursively in: {root_directory} ---")
-    
-    # os.walk yields (dirpath, dirnames, filenames) for each directory it visits
+
+    # Collect all image paths first
     for dirpath, _, filenames in os.walk(root_directory):
-        
         for filename in filenames:
-            # Get the file extension and convert to lowercase for robust comparison
             ext = os.path.splitext(filename)[1].lower()
-            
-            # Check if the file is an image based on its extension
             if ext in IMAGE_EXTENSIONS:
-                
-                # Construct the full file path
                 image_path = os.path.join(dirpath, filename)
-                
-                # Increment the counter for every file processed
-                total_files_checked += 1
-                
-                is_corrupt, message = is_image_corrupted(image_path)
-                if is_corrupt:
-                    print(f"❌ Corrupted: {image_path} -> {message}")
-                    corrupted_images.append(image_path)
-                else:
-                    if is_possible_icon(image_path):
-                        possible_icons.append(image_path)
+                image_paths.append(image_path)
+
+    total_files_checked = len(image_paths)
+
+    def process_image(image_path):
+        is_corrupt, message = is_image_corrupted(image_path)
+        if is_corrupt:
+            print(f"❌ Corrupted: {image_path} -> {message}")
+            return (image_path, True, False)
+        else:
+            if is_possible_icon(image_path):
+                return (image_path, False, True)
+        return (image_path, False, False)
+
+    # Use ThreadPoolExecutor for I/O bound tasks
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        results = list(executor.map(process_image, image_paths))
+    for image_path, is_corrupt, is_icon in results:
+        if is_corrupt:
+            corrupted_images.append(image_path)
+        if is_icon:
+            possible_icons.append(image_path)
 
     print(f"\n--- Summary 📊 ---")
     print(f"Total image files checked: **{total_files_checked}**")
