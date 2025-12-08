@@ -135,3 +135,16 @@ if __name__ == "__main__":
                 print("All selected corrupted files have been deleted.")
             else:
                 print("No files were deleted.")
+
+        # Move possible icons to ./possible_icons
+        import shutil
+        icon_dir = os.path.join(os.getcwd(), "possible_icons")
+        if not os.path.exists(icon_dir):
+            os.makedirs(icon_dir)
+        for icon_path in possible_icons:
+            try:
+                dest_path = os.path.join(icon_dir, os.path.basename(icon_path))
+                shutil.move(icon_path, dest_path)
+                print(f"Moved icon: {icon_path} -> {dest_path}")
+            except Exception as e:
+                print(f"Failed to move icon {icon_path}: {e}")
