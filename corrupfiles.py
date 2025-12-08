@@ -148,10 +148,18 @@ if __name__ == "__main__":
         icon_dir = os.path.join(os.getcwd(), "possible_icons")
         if not os.path.exists(icon_dir):
             os.makedirs(icon_dir)
+        import stat
         for icon_path in possible_icons:
+            dest_path = os.path.join(icon_dir, os.path.basename(icon_path))
             try:
-                dest_path = os.path.join(icon_dir, os.path.basename(icon_path))
                 shutil.move(icon_path, dest_path)
                 print(f"Moved icon: {icon_path} -> {dest_path}")
+            except PermissionError:
+                try:
+                    os.chmod(icon_path, stat.S_IWUSR | stat.S_IRUSR)
+                    shutil.move(icon_path, dest_path)
+                    print(f"Changed permissions and moved icon: {icon_path} -> {dest_path}")
+                except Exception as e:
+                    print(f"Failed to move icon {icon_path} after changing permissions: {e}")
             except Exception as e:
                 print(f"Failed to move icon {icon_path}: {e}")
