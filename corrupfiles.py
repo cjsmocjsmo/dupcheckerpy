@@ -128,7 +128,7 @@ def check_directory_for_corrupted_images_recursive(root_directory):
 
 # --- Example Usage ---
 # CHANGE THIS PATH to the root directory you want to check recursively
-target_directory = "/media/piir/PiTB/PICTURES/newcrap" 
+target_directory = "/media/piir/PiTB/PICTURES/newcrap2" 
 
 if __name__ == "__main__":
     if not os.path.isdir(target_directory):
