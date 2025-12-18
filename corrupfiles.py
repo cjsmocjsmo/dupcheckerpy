@@ -20,15 +20,15 @@ def is_image_corrupted(image_path):
         # Check 2: Check if the resulting array has zero size
         if img.size == 0:
             return True, "Loaded image array has zero size."
-        # Additional check for JPEGs: use PIL to verify integrity
+        # Additional check for JPEGs: use PIL to fully load image data
         ext = os.path.splitext(image_path)[1].lower()
         if ext in ['.jpg', '.jpeg']:
             try:
                 from PIL import Image, UnidentifiedImageError
                 with Image.open(image_path) as pil_img:
-                    pil_img.verify()  # Will raise if truncated/corrupt
+                    pil_img.load()  # Force loading all image data
             except Exception as pil_e:
-                return True, f"PIL verify failed: {pil_e}"
+                return True, f"PIL load failed: {pil_e}"
         return False, "Image loaded successfully."
     except Exception as e:
         # Catch unexpected errors during the file read process
