@@ -12,19 +12,24 @@ def is_image_corrupted(image_path):
         return True, "File path does not exist."
         
     try:
-        # Attempt to read the image
+        # Attempt to read the image with OpenCV
         img = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
-        
         # Check 1: Check if the image array is None (failure to decode/corrupted data)
         if img is None:
             return True, "Image could not be decoded (likely corrupted or unsupported format)."
-        
         # Check 2: Check if the resulting array has zero size
         if img.size == 0:
             return True, "Loaded image array has zero size."
-            
+        # Additional check for JPEGs: use PIL to verify integrity
+        ext = os.path.splitext(image_path)[1].lower()
+        if ext in ['.jpg', '.jpeg']:
+            try:
+                from PIL import Image, UnidentifiedImageError
+                with Image.open(image_path) as pil_img:
+                    pil_img.verify()  # Will raise if truncated/corrupt
+            except Exception as pil_e:
+                return True, f"PIL verify failed: {pil_e}"
         return False, "Image loaded successfully."
-        
     except Exception as e:
         # Catch unexpected errors during the file read process
         return True, f"An unexpected error occurred during processing: {e}"
@@ -123,7 +128,7 @@ def check_directory_for_corrupted_images_recursive(root_directory):
 
 # --- Example Usage ---
 # CHANGE THIS PATH to the root directory you want to check recursively
-target_directory = "/media/piir/PiTB/PICTURES/" 
+target_directory = "/media/piir/PiTB/PICTURES/Clean" 
 
 if __name__ == "__main__":
     if not os.path.isdir(target_directory):
