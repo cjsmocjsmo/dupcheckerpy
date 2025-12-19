@@ -44,16 +44,16 @@ def is_possible_icon(image_path, size_threshold=(128, 128)):
     """
     try:
         from PIL import Image, UnidentifiedImageError
-        img = Image.open(image_path)
-        # Check size
-        if img.size[0] <= size_threshold[0] and img.size[1] <= size_threshold[1]:
-            return True, False
-        # Check transparency
-        if img.mode in ("RGBA", "LA") or (img.mode == "P" and 'transparency' in img.info):
-            alpha = img.convert("RGBA").getchannel("A")
-            if alpha.getextrema()[0] < 255:
+        with Image.open(image_path) as img:
+            # Check size
+            if img.size[0] <= size_threshold[0] and img.size[1] <= size_threshold[1]:
                 return True, False
-        return False, False
+            # Check transparency
+            if img.mode in ("RGBA", "LA") or (img.mode == "P" and 'transparency' in img.info):
+                alpha = img.convert("RGBA").getchannel("A")
+                if alpha.getextrema()[0] < 255:
+                    return True, False
+            return False, False
     except Exception as e:
         # Check for truncated JPEG error
         if hasattr(e, 'args') and any('Premature end of JPEG file' in str(arg) for arg in e.args):
