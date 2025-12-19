@@ -24,11 +24,14 @@ def is_image_corrupted(image_path):
         ext = os.path.splitext(image_path)[1].lower()
         if ext in ['.jpg', '.jpeg']:
             try:
+                import warnings
                 from PIL import Image, UnidentifiedImageError
-                with Image.open(image_path) as pil_img:
-                    pil_img.load()  # Force loading all image data
+                with warnings.catch_warnings():
+                    warnings.simplefilter('error')  # Treat warnings as errors
+                    with Image.open(image_path) as pil_img:
+                        pil_img.load()  # Force loading all image data
             except Exception as pil_e:
-                return True, f"PIL load failed: {pil_e}"
+                return True, f"PIL load failed or warning: {pil_e}"
         return False, "Image loaded successfully."
     except Exception as e:
         # Catch unexpected errors during the file read process
@@ -87,11 +90,21 @@ def check_directory_for_corrupted_images_recursive(root_directory):
         is_corrupt, message = is_image_corrupted(image_path)
         if is_corrupt:
             print(f"❌ Corrupted: {image_path} -> {message}")
+            try:
+                os.remove(image_path)
+                print(f"Deleted: {image_path}")
+            except Exception as e:
+                print(f"Failed to delete {image_path}: {e}")
             return (image_path, True, False)
         else:
             is_icon, is_truncated = is_possible_icon(image_path)
             if is_truncated:
                 print(f"❌ Corrupted (Premature end of JPEG file): {image_path}")
+                try:
+                    os.remove(image_path)
+                    print(f"Deleted: {image_path}")
+                except Exception as e:
+                    print(f"Failed to delete {image_path}: {e}")
                 return (image_path, True, False)
             if is_icon:
                 return (image_path, False, True)
@@ -111,7 +124,7 @@ def check_directory_for_corrupted_images_recursive(root_directory):
     valid_count = total_files_checked - len(corrupted_images)
     print(f"Valid images found: **{valid_count}**")
     if corrupted_images:
-        print(f"Corrupted images found: **{len(corrupted_images)}**.")
+        print(f"Corrupted images found and deleted: **{len(corrupted_images)}**.")
         print("\nCorrupted image list (Full Path):")
         for path in corrupted_images:
             print(f"- {path}")
@@ -135,18 +148,6 @@ if __name__ == "__main__":
         print(f"Error: Directory not found at {target_directory}")
     else:
         corrupted_files, possible_icons = check_directory_for_corrupted_images_recursive(target_directory)
-        if corrupted_files:
-            answer = input("\nDo you want to delete the corrupted files listed above? (y/N): ").strip().lower()
-            if answer == 'y':
-                for path in corrupted_files:
-                    try:
-                        os.remove(path)
-                        print(f"Deleted: {path}")
-                    except Exception as e:
-                        print(f"Failed to delete {path}: {e}")
-                print("All selected corrupted files have been deleted.")
-            else:
-                print("No files were deleted.")
 
         # Move possible icons to ./possible_icons
         import shutil
