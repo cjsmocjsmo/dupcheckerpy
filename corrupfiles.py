@@ -56,6 +56,8 @@ def is_possible_icon(image_path, size_threshold=(128, 128)):
             return False, False
     except Exception as e:
         # Check for truncated JPEG error
+        if hasattr(e, 'args') and any('Corrupt JPEG data' in str(arg) for arg in e.args):
+            return False, True
         if hasattr(e, 'args') and any('Premature end of JPEG file' in str(arg) for arg in e.args):
             return False, True
         return False, False
