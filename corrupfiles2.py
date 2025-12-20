@@ -1,7 +1,7 @@
 import os
 from PIL import Image, UnidentifiedImageError
 
-def Is_image_corrupt(image_path, size_threshold=(128, 128)):
+def is_image_corrupt(image_path, size_threshold=(128, 128)):
     """
     Checks if an image file is corrupted, truncated, or likely an icon (small or transparent).
     Returns a tuple: (is_corrupt, message, is_icon, is_truncated)
@@ -41,6 +41,23 @@ def Is_image_corrupt(image_path, size_threshold=(128, 128)):
     except Exception as e:
         return True, f"An unexpected error occurred during processing: {e}", False, False
 
+
+def try_delete_file(path):
+    """Attempt to delete a file and print result."""
+    import stat
+    try:
+        os.remove(path)
+        print(f"Deleted: {path}")
+    except PermissionError:
+        try:
+            os.chmod(path, stat.S_IWUSR | stat.S_IRUSR)
+            os.remove(path)
+            print(f"Changed permissions and deleted: {path}")
+        except Exception as e:
+            print(f"Failed to delete {path} after changing permissions: {e}")
+    except Exception as e:
+        print(f"Failed to delete {path}: {e}")
+
     # Function removed: logic merged into Is_image_corrupt
 
 def check_directory_for_corrupted_images_recursive(root_directory):
@@ -70,22 +87,14 @@ def check_directory_for_corrupted_images_recursive(root_directory):
     total_files_checked = len(image_paths)
 
     def process_image(image_path):
-        is_corrupt, message, is_icon, is_truncated = Is_image_corrupt(image_path)
+        is_corrupt, message, is_icon, is_truncated = is_image_corrupt(image_path)
         if is_corrupt:
             print(f"❌ Corrupted: {image_path} -> {message}")
-            try:
-                os.remove(image_path)
-                print(f"Deleted: {image_path}")
-            except Exception as e:
-                print(f"Failed to delete {image_path}: {e}")
+            try_delete_file(image_path)
             return (image_path, True, False)
         if is_truncated:
             print(f"❌ Corrupted (Premature end of JPEG file): {image_path}")
-            try:
-                os.remove(image_path)
-                print(f"Deleted: {image_path}")
-            except Exception as e:
-                print(f"Failed to delete {image_path}: {e}")
+            try_delete_file(image_path)
             return (image_path, True, False)
         if is_icon:
             return (image_path, False, True)
@@ -120,33 +129,37 @@ def check_directory_for_corrupted_images_recursive(root_directory):
         print("No possible icons were found.")
     return corrupted_images, possible_icons
 
-# --- Example Usage ---
-# CHANGE THIS PATH to the root directory you want to check recursively
-target_directory = "/media/piir/PiTB/PICTURES/NewPics" 
 
-if __name__ == "__main__":
+def main():
+    import sys
+    import shutil
+    if len(sys.argv) > 1:
+        target_directory = sys.argv[1]
+    else:
+        target_directory = "/media/piir/PiTB/PICTURES/oldpics"
     if not os.path.isdir(target_directory):
         print(f"Error: Directory not found at {target_directory}")
-    else:
-        corrupted_files, possible_icons = check_directory_for_corrupted_images_recursive(target_directory)
-
-        # Move possible icons to ./possible_icons
-        import shutil
-        icon_dir = os.path.join(os.getcwd(), "possible_icons")
-        if not os.path.exists(icon_dir):
-            os.makedirs(icon_dir)
-        import stat
-        for icon_path in possible_icons:
-            dest_path = os.path.join(icon_dir, os.path.basename(icon_path))
+        return
+    corrupted_files, possible_icons = check_directory_for_corrupted_images_recursive(target_directory)
+    # Move possible icons to ./possible_icons
+    icon_dir = os.path.join(os.getcwd(), "possible_icons")
+    if not os.path.exists(icon_dir):
+        os.makedirs(icon_dir)
+    for icon_path in possible_icons:
+        dest_path = os.path.join(icon_dir, os.path.basename(icon_path))
+        try:
+            shutil.move(icon_path, dest_path)
+            print(f"Moved icon: {icon_path} -> {dest_path}")
+        except PermissionError:
             try:
+                import stat
+                os.chmod(icon_path, stat.S_IWUSR | stat.S_IRUSR)
                 shutil.move(icon_path, dest_path)
-                print(f"Moved icon: {icon_path} -> {dest_path}")
-            except PermissionError:
-                try:
-                    os.chmod(icon_path, stat.S_IWUSR | stat.S_IRUSR)
-                    shutil.move(icon_path, dest_path)
-                    print(f"Changed permissions and moved icon: {icon_path} -> {dest_path}")
-                except Exception as e:
-                    print(f"Failed to move icon {icon_path} after changing permissions: {e}")
+                print(f"Changed permissions and moved icon: {icon_path} -> {dest_path}")
             except Exception as e:
-                print(f"Failed to move icon {icon_path}: {e}")
+                print(f"Failed to move icon {icon_path} after changing permissions: {e}")
+        except Exception as e:
+            print(f"Failed to move icon {icon_path}: {e}")
+
+if __name__ == "__main__":
+    main()
