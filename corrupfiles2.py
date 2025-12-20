@@ -136,7 +136,7 @@ def main():
     if len(sys.argv) > 1:
         target_directory = sys.argv[1]
     else:
-        target_directory = "/media/piir/PiTB/PICTURES/test2"
+        target_directory = "/media/piir/PiTB/PICTURES"
     if not os.path.isdir(target_directory):
         print(f"Error: Directory not found at {target_directory}")
         return
