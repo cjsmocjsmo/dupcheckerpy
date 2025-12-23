@@ -3,7 +3,7 @@ import sqlite3
 import shutil
 
 # Define the directories and database file
-master_pics_dir = '/media/piir/PiTB/DONTDELETE/'
+master_pics_dir = '/media/piir/PiTB/MASTERPICS/'
 db_file = '/home/piir/dupcheckerpy/dupcheckerpy/imagehashes.db'
 
 def create_master_pics_dir(master_pics_dir):
