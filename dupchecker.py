@@ -2,10 +2,12 @@ import os
 import sqlite3
 import hashlib
 import imagehash
-import tempfile
 from PIL import Image
-from functools import partial
 from concurrent.futures import ProcessPoolExecutor
+
+IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp'}
+VIDEO_EXTENSIONS = {'.mp4'}
+DEFAULT_BATCH_SIZE = 500
 
 def calculate_mhash(file_path, buffer_size=65536):
     """Generates an MD5 hash of the file content."""
@@ -23,67 +25,58 @@ def calculate_mhash(file_path, buffer_size=65536):
 
 def calculate_phash(image_path):
     try:
-        img = Image.open(image_path).convert('L')
-        hash_value = imagehash.phash(img)
-        return str(hash_value)
+        with Image.open(image_path) as img:
+            processed = img.convert('L').resize((256, 256))
+            return str(imagehash.phash(processed))
     except Exception as e:
         print(f"Error calculating pHash for {image_path}: {e}")
         return None
 
-def process_single_image(img_path, db_name):
-    try:
-        conn = sqlite3.connect(db_name)
-        cursor = conn.cursor()
+def process_single_image(img_path):
+    phash = calculate_phash(img_path)
+    if phash:
+        return ("hashes", os.path.basename(img_path), img_path, phash)
+    return None
 
-        img = Image.open(img_path).convert('L')
-        img = img.resize((256, 256))
-        with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as temp_file:
-            temp_path = temp_file.name
-            img.save(temp_path)
-            phash = calculate_phash(temp_path)
-        os.remove(temp_path)
+def process_single_video(video_path):
+    mhash = calculate_mhash(video_path)
+    if mhash:
+        return ("video_hashes", os.path.basename(video_path), video_path, mhash)
+    return None
 
-        if phash:
-            try:
-                cursor.execute("INSERT INTO hashes (filename, path, phash) VALUES (?, ?, ?)", 
-                               (os.path.basename(img_path), img_path, phash))
-                conn.commit()
-                print(f"Inserted {img_path} with pHash {phash}")
-            except sqlite3.IntegrityError:
-                print(f"Skipping {img_path} as it's already in the database.")
-        else:
-            print(f"Hash for {img_path} is None, skipping database insertion.")
-    except Exception as e:
-        print(f"Error processing {img_path}: {e}")
-    finally:
-        conn.close()
+def process_single_file(file_path):
+    extension = os.path.splitext(file_path)[1].lower()
 
-def process_single_video(video_path, db_name):
-    try:
-        conn = sqlite3.connect(db_name)
-        cursor = conn.cursor()
-        mhash = calculate_mhash(video_path)
-        
-        if mhash:
-            try:
-                cursor.execute("INSERT INTO video_hashes (filename, path, mhash) VALUES (?, ?, ?)", 
-                               (os.path.basename(video_path), video_path, mhash))
-                conn.commit()
-                print(f"Inserted {video_path} with pHash {mhash}")
-            except sqlite3.IntegrityError:
-                print(f"Skipping {video_path} as it's already in the database.")
-        else:
-            print(f"Hash for {video_path} is None, skipping database insertion.")
-    except Exception as e:
-        print(f"Error processing {video_path}: {e}")
-    finally:
-        conn.close()
+    if extension in IMAGE_EXTENSIONS:
+        try:
+            return process_single_image(file_path)
+        except Exception as e:
+            print(f"Error processing {file_path}: {e}")
+            return None
 
-def process_images_and_store_hashes(folder, db_name='imagehashes.db'):
+    if extension in VIDEO_EXTENSIONS:
+        try:
+            return process_single_video(file_path)
+        except Exception as e:
+            print(f"Error processing {file_path}: {e}")
+            return None
+
+    return None
+
+def iter_media_files(folder):
+    for root, _, files in os.walk(folder):
+        for file_name in files:
+            extension = os.path.splitext(file_name)[1].lower()
+            if extension in IMAGE_EXTENSIONS or extension in VIDEO_EXTENSIONS:
+                yield os.path.join(root, file_name)
+
+def initialize_database(db_name):
     conn = sqlite3.connect(db_name)
+    conn.execute('PRAGMA journal_mode=WAL')
+    conn.execute('PRAGMA synchronous=NORMAL')
+    conn.execute('PRAGMA busy_timeout=5000')
     cursor = conn.cursor()
 
-    # Create table if it doesn't exist
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS hashes (
             image_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -101,32 +94,67 @@ def process_images_and_store_hashes(folder, db_name='imagehashes.db'):
         )
     ''')
     conn.commit()
-    conn.close()
+    return conn
 
-    image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp']
-    img_paths = []
-    mov_paths = []
+def flush_batches(conn, batches):
+    rows_to_write = 0
+    with conn:
+        for table_name, rows in batches.items():
+            if not rows:
+                continue
+            if table_name == 'hashes':
+                conn.executemany(
+                    'INSERT OR IGNORE INTO hashes (filename, path, phash) VALUES (?, ?, ?)',
+                    rows,
+                )
+            else:
+                conn.executemany(
+                    'INSERT OR IGNORE INTO video_hashes (filename, path, mhash) VALUES (?, ?, ?)',
+                    rows,
+                )
+            rows_to_write += len(rows)
+            rows.clear()
+    return rows_to_write
 
-    # Collect all image paths
-    count = 0
-    for dir, _, files in os.walk(folder):
-        for file in files:
-            count += 1
-            if file.lower().endswith(tuple(image_extensions)):
-                img_paths.append(os.path.join(dir, file))
-            elif file.lower().endswith('.mp4'):
-                mov_paths.append(os.path.join(dir, file))
+def process_images_and_store_hashes(folder, db_name='imagehash.db', max_workers=2, batch_size=DEFAULT_BATCH_SIZE, chunksize=32):
+    conn = None
+    try:
+        conn = initialize_database(db_name)
+        batches = {
+            'hashes': [],
+            'video_hashes': [],
+        }
 
-    # Use ProcessPoolExecutor to process images in parallel
-    with ProcessPoolExecutor() as executor:
-        process_func = partial(process_single_image, db_name=db_name)
-        executor.map(process_func, img_paths)
+        scanned_files = 0
+        staged_rows = 0
 
-    with ProcessPoolExecutor() as executor:
-        process_func = partial(process_single_video, db_name=db_name)
-        executor.map(process_func, mov_paths)
+        with ProcessPoolExecutor(max_workers=max_workers) as executor:
+            for result in executor.map(process_single_file, iter_media_files(folder), chunksize=chunksize):
+                scanned_files += 1
+                if result is None:
+                    continue
 
-    print(f"Processed {count} images and stored hashes in {db_name}")
+                table_name, filename, path, hash_value = result
+                batches[table_name].append((filename, path, hash_value))
+                staged_rows += 1
+
+                if staged_rows >= batch_size:
+                    written_rows = flush_batches(conn, batches)
+                    print(f"Scanned {scanned_files} files, staged {written_rows} rows")
+                    staged_rows = 0
+
+        if any(batches.values()):
+            written_rows = flush_batches(conn, batches)
+            print(f"Flushed final {written_rows} rows")
+
+        print(f"Processed {scanned_files} media files and stored hashes in {db_name}")
+    except Exception as e:
+        print(f"Error processing folder {folder}: {e}")
+    finally:
+        try:
+            conn.close()
+        except Exception:
+            pass
 
 def dupchecker_main(IMAGE_FOLDER):
     process_images_and_store_hashes(IMAGE_FOLDER)
