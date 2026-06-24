@@ -243,10 +243,4 @@ if __name__ == '__main__':
     for image_folder in image_folders:
         process_images_and_store_hashes(
             image_folder, 
-            db_name='./imagehash.db', 
-            max_workers=1, 
-            batch_size=500, 
-            chunksize=8, 
-            vacuum_interval=1, 
-            optimize_every_runs=0,
         )
