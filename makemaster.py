@@ -4,7 +4,7 @@ import shutil
 
 # Define the directories and database file
 master_pics_dir = '/media/piir/PiTB/MASTERPICS/'
-db_file = '/home/piir/dupcheckerpy/dupcheckerpy/imagehashes.db'
+db_file = './imagehash.db'
 
 def create_master_pics_dir(master_pics_dir):
     """Create the MasterPics directory if it doesn't exist."""

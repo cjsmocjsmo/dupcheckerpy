@@ -162,7 +162,7 @@ def flush_batches(conn, batches):
 
 def process_images_and_store_hashes(
     folder,
-    db_name='imagehash.db',
+    db_name='./imagehash.db',
     max_workers=DEFAULT_MAX_WORKERS,
     batch_size=DEFAULT_BATCH_SIZE,
     chunksize=DEFAULT_CHUNKSIZE,
