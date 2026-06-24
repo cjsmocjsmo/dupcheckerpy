@@ -58,5 +58,10 @@ class ExtCount:
 
 
 if __name__ == '__main__':
-    folder = '/media/PiTB/foofuck/Clean'
-    ext_counter = ExtCount(folder).get_ext_count()
+    folders = [
+        '/media/PiTB/foofuck/Clean',
+        '/media/PiTB/foofuck/test2',
+        '/media/PiTB/foofuck/test3',
+    ]
+    for folder in folders:
+        ext_counter = ExtCount(folder).get_ext_count()
