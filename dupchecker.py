@@ -235,5 +235,10 @@ def dupchecker_main(IMAGE_FOLDER):
     process_images_and_store_hashes(IMAGE_FOLDER)
 
 if __name__ == '__main__':
-    image_folder = '/home/piir/Pictures/'  # Replace with the path to your image folder
-    process_images_and_store_hashes(image_folder)
+    image_folders = [
+        '/media/PiTB/foofuck/Clean',
+        '/media/PiTB/foofuck/test2',
+        '/media/PiTB/foofuck/test3',
+    ]  # Replace with the path to your image folder
+    for image_folder in image_folders:
+        process_images_and_store_hashes(image_folder)
