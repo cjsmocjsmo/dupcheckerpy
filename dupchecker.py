@@ -13,6 +13,7 @@ DEFAULT_MAX_WORKERS = 1
 DEFAULT_CHUNKSIZE = 8
 DEFAULT_VACUUM_INTERVAL = 0
 DEFAULT_OPTIMIZE_EVERY_RUNS = 0
+_OPENBLAS_WARNING_EMITTED = False
 
 def calculate_mhash(file_path, buffer_size=65536):
     """Generates an MD5 hash of the file content."""
@@ -29,12 +30,26 @@ def calculate_mhash(file_path, buffer_size=65536):
         return None
 
 def calculate_phash(image_path):
+    global _OPENBLAS_WARNING_EMITTED
     try:
         with Image.open(image_path) as img:
             # Reduce image working-set size before pHash calculation on low-memory devices.
             img.draft('L', (128, 128))
             processed = img.convert('L').resize((128, 128))
             return str(imagehash.phash(processed))
+    except OSError as e:
+        error_text = str(e)
+        if 'libopenblas.so.0' in error_text:
+            if not _OPENBLAS_WARNING_EMITTED:
+                print(
+                    "pHash dependency error: missing shared library libopenblas.so.0. "
+                    "The image file exists, but the Python stack (NumPy/SciPy) cannot load OpenBLAS. "
+                    "Install your distro package (for Debian/Ubuntu: libopenblas0) and rerun."
+                )
+                _OPENBLAS_WARNING_EMITTED = True
+            return None
+        print(f"Error calculating pHash for {image_path}: {e}")
+        return None
     except Exception as e:
         print(f"Error calculating pHash for {image_path}: {e}")
         return None

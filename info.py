@@ -56,12 +56,17 @@ class ExtCount:
         print(f"PDF: {self.pdfcount}")
         print(f"ext_list: {list(set(self.ext_list))}")
 
+        count = self.pngcount + self.jpgcount + self.jpegcount + self.gifcount + self.bmpcount + self.mp4count + self.count3gp + self.jsoncount + self.pdfcount
+        print(f"Total Count: {count}")
+
+        return count
+
 
 if __name__ == '__main__':
-    folders = [
-        '/media/PiTB/foofuck/Clean',
-        '/media/PiTB/foofuck/test2',
-        '/media/PiTB/foofuck/test3',
-    ]
-    for folder in folders:
-        ext_counter = ExtCount(folder).get_ext_count()
+    
+    ext_counter1 = ExtCount('/media/PiTB/foofuck/Clean').get_ext_count()
+    ext_counter2 = ExtCount('/media/PiTB/foofuck/test2').get_ext_count()
+    ext_counter3 = ExtCount('/media/PiTB/foofuck/test3').get_ext_count()
+
+    count = ext_counter1 + ext_counter2 + ext_counter3
+    print(f"Total Count from all folders: {count}")
