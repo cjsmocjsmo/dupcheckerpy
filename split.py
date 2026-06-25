@@ -2,7 +2,6 @@ import os
 import shutil
 import math
 
-# from newdupchecker import SOURCE_FOLDER
 
 def organize_images_by_size(source_folder, destination_base_folder, max_folder_size_gb):
     """
@@ -84,31 +83,3 @@ def split_main(source_folder=None, destination_base_folder=None, max_folder_size
 
 if __name__ == "__main__":
     split_main()
-# # --- Configuration ---
-# # IMPORTANT: Replace 'path/to/your/20000_images_folder' with the actual path to your images.
-# SOURCE_FOLDER = "/home/whitepi/MasterPics"
-
-# # IMPORTANT: Replace 'path/to/your/output_folders' with where you want the new subfolders to be created.
-# DESTINATION_BASE_FOLDER = "/home/whitepi/MasterPicsDeduped"
-
-# # Maximum size per subfolder in Gigabytes
-# MAX_FOLDER_SIZE_GB = 1.85
-
-# --- Run the script ---
-# if __name__ == "__main__":
-#     # Example usage:
-#     # First, create some dummy files for testing if you don't have 20,000 images
-#     # This part is for demonstration and can be removed or commented out for actual use
-#     # print("Creating dummy files for demonstration...")
-#     # dummy_source = "dummy_images_source"
-#     # os.makedirs(dummy_source, exist_ok=True)
-#     # for i in range(100): # Create 100 dummy files, each ~20MB
-#     #     with open(os.path.join(dummy_source, f"image_{i:04d}.jpg"), "wb") as f:
-#     #         f.write(os.urandom(20 * 1024 * 1024)) # 20MB random data
-#     # print("Dummy files created.")
-#     #
-#     # # Then run the organization
-#     # organize_images_by_size(dummy_source, "organized_images_output", 0.5) # Example: 0.5 GB per folder
-
-#     # For your actual use case, uncomment and adjust the paths below:
-#     organize_images_by_size(SOURCE_FOLDER, DESTINATION_BASE_FOLDER, MAX_FOLDER_SIZE_GB)

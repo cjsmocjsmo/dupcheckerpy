@@ -125,6 +125,7 @@ class CorruptFiles:
                         print(f"Failed to move icon {icon_path} after changing permissions: {e}")
                 except Exception as e:
                     print(f"Failed to move icon {icon_path}: {e}")
+            return len(corrupted_images)
 
 if __name__ == "__main__":
     target_directory = "/media/piir/PiTB/PICTURES/NewPics"  # Replace with the path to your target directory
